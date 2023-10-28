@@ -31,3 +31,7 @@ RUN cmake .. -Wno-dev -G Ninja -DOCELOT_BUILD_TOOLS=OFF && ninja && ninja instal
 COPY tinygrad.tar.gz /tinygrad/
 WORKDIR /tinygrad
 RUN tar -xzf tinygrad.tar.gz && rm tinygrad.tar.gz
+
+RUN cd /
+RUN apt update && apt install -y curl
+RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage && chmod u+x nvim.appimage && ./nvim.appimage
