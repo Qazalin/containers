@@ -20,6 +20,8 @@ RUN apt update && apt install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install pycuda pytest numpy
+
 RUN git clone --recurse-submodules https://github.com/gpuocelot/gpuocelot.git /gpuocelot
 WORKDIR /gpuocelot/ocelot
 RUN mkdir build
@@ -29,5 +31,3 @@ RUN cmake .. -Wno-dev -G Ninja -DOCELOT_BUILD_TOOLS=OFF && ninja && ninja instal
 COPY tinygrad.tar.gz /tinygrad/
 WORKDIR /tinygrad
 RUN tar -xzf tinygrad.tar.gz && rm tinygrad.tar.gz
-
-RUN pip install -e '.[testing,cuda]' --extra-index-url https://download.pytorch.org/whl/cpu --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/Triton-Nightly/pypi/simple/
