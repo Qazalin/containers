@@ -27,5 +27,5 @@ RUN rm -rf root/.zshrc && cd root/.dotfiles && stow nvim tmux zsh
 RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 
 RUN zsh -c "curl -fsSL https://fnm.vercel.app/install | bash && source ~/.zshrc && fnm install 16"
-# TODO make this automatic
+# TODO make this work automatically
 RUN echo 'vim ~/.dotfiles/nvim/.config/nvim/lua/qazal/packer.lua -c "source %" -c "PackerSync" -c "qa"'
