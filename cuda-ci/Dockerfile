@@ -20,7 +20,7 @@ RUN apt update && apt install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install pycuda pytest numpy
+RUN pip install pycuda pytest numpy requests tqdm
 
 RUN git clone --recurse-submodules https://github.com/gpuocelot/gpuocelot.git /gpuocelot
 WORKDIR /gpuocelot/ocelot
