@@ -62,3 +62,5 @@ RUN cmake .. -Wno-dev -G Ninja -DOCELOT_BUILD_TOOLS=OFF && ninja && ninja instal
 COPY tinygrad.tar.gz /tinygrad/
 WORKDIR /tinygrad
 RUN tar -xzf tinygrad.tar.gz && rm tinygrad.tar.gz
+RUN git init && git add .
+RUN pip install -e '.[linting,testing]' --extra-index-url https://download.pytorch.org/whl/cpu
