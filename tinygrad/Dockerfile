@@ -23,7 +23,7 @@ RUN git clone https://github.com/neovim/neovim.git && cd neovim && make CMAKE_BU
 RUN curl -fsSL https://fnm.vercel.app/install | bash
 
 # .dotfiles
-RUN git clone -b linux https://github.com/Qazalin/.dotfiles.git /root/code/tools/.dotfiles
+RUN git clone -b master https://github.com/Qazalin/.dotfiles.git /root/code/tools/.dotfiles
 WORKDIR /root/code/tools/.dotfiles
 RUN rm -rf /root/.zshrc && stow -t ~ nvim tmux zsh
 
@@ -33,3 +33,16 @@ RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim ~/.local/share
 RUN git clone https://github.com/tinygrad/tinygrad.git /root/code/tinygrad/tinygrad
 WORKDIR /root/code/tinygrad/tinygrad
 RUN git remote remove origin && git remote add origin https://github.com/Qazalin/tinygrad.git && git remote add upstream https://github.com/tinygrad/tinygrad.git
+
+# git config
+RUN git config --global --add user.name qazal && git config --global --add user.email qazal.software@gmail.com
+
+# --- tiyngrad backends setup ---
+
+# HIP
+RUN echo 'Acquire::http::Pipeline-Depth "5";' > /etc/apt/apt.conf.d/99parallel && \
+    wget https://repo.radeon.com/rocm/rocm.gpg.key -O - | gpg --dearmor > /etc/apt/keyrings/rocm.gpg && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/debian jammy main" > /etc/apt/sources.list.d/rocm.list && \
+    echo -e 'Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600' > /etc/apt/preferences.d/rocm-pin-600 && \
+    apt update && \
+    apt install --no-install-recommends --allow-unauthenticated -y rocm-hip-libraries hip-dev
