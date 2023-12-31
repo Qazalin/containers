@@ -15,9 +15,7 @@ RUN apt update && apt install -y \
 CMD ["zsh"]
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# (almost) bleeding edge neovim
-RUN apt update && apt install -y ninja-build gettext cmake unzip && rm -rf /var/lib/apt/lists/*
-RUN git clone https://github.com/neovim/neovim.git && cd neovim && make CMAKE_BUILD_TYPE=Release && make install
+RUN apt update && apt install -y neovim
 
 # fnm (for lsp)
 RUN curl -fsSL https://fnm.vercel.app/install | bash
