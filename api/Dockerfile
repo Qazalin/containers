@@ -45,10 +45,14 @@ RUN echo 'Acquire::http::Pipeline-Depth "5";' > /etc/apt/apt.conf.d/99parallel \
 RUN git clone --depth 1 https://github.com/Qazalin/tinygrad.git /root/code/tinygrad/tinygrad
 WORKDIR /root/code/tinygrad/tinygrad
 RUN git remote remove origin && git remote add origin https://github.com/Qazalin/tinygrad.git && git remote add upstream https://github.com/tinygrad/tinygrad.git
-RUN git fetch --depth 1 origin b1a079772e218452f47859588f6f0bf12a3c0d76 && git checkout b1a079772e218452f47859588f6f0bf12a3c0d76
+RUN git fetch --depth 1 origin f8c3d5ca94b1cbb10ba36c95022785b63e92915b && git checkout f8c3d5ca94b1cbb10ba36c95022785b63e92915b
 RUN pip install -e .
 EXPOSE 80
 CMD ["python", "server.py"]
+
+# making rocm work
+RUN sudo apt update && sudo apt-get -y install prelink
+RUN sudo execstack -c /opt/rocm/lib/libamdhip64.so*
 
 # git config
 RUN git config --global --add user.name qazal && git config --global --add user.email qazal.software@gmail.com && git config --global core.editor "nvim"
