@@ -9,38 +9,25 @@ RUN apt update && apt install -y \
     fzf \
     ripgrep \
     python3-pip \
+    vim \
     && rm -rf /var/lib/apt/lists/*
 
 # setup zsh
 CMD ["zsh"]
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-RUN apt update && apt install -y neovim
-
-# fnm (for lsp)
-RUN curl -fsSL https://fnm.vercel.app/install | bash
 
 # .dotfiles
 RUN git clone -b master https://github.com/Qazalin/.dotfiles.git /root/code/tools/.dotfiles
 WORKDIR /root/code/tools/.dotfiles
-RUN rm -rf /root/.zshrc && stow -t ~ nvim tmux zsh
-
-RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+RUN rm -rf /root/.zshrc && stow -t ~ tmux zsh
 
 # tinygrad
 RUN git clone https://github.com/tinygrad/tinygrad.git /root/code/tinygrad/tinygrad
 WORKDIR /root/code/tinygrad/tinygrad
 RUN git remote remove origin && git remote add origin https://github.com/Qazalin/tinygrad.git && git remote add upstream https://github.com/tinygrad/tinygrad.git
 
-# git config
-RUN git config --global --add user.name qazal && git config --global --add user.email qazal.software@gmail.com
-
-# --- tiyngrad backends setup ---
-
-# HIP
-RUN echo 'Acquire::http::Pipeline-Depth "5";' > /etc/apt/apt.conf.d/99parallel && \
-    wget https://repo.radeon.com/rocm/rocm.gpg.key -O - | gpg --dearmor > /etc/apt/keyrings/rocm.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/debian jammy main" > /etc/apt/sources.list.d/rocm.list && \
-    echo -e 'Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600' > /etc/apt/preferences.d/rocm-pin-600 && \
-    apt update && \
-    apt install --no-install-recommends --allow-unauthenticated -y rocm-hip-libraries hip-dev
+# remu
+WORKDIR /root/code/
+RUN git clone https://github.com/Qazalin/remu.git
+RUN curl https://gist.github.com/Qazalin/9df9d3edf19a713f4a092e44911c516b > /tmp/k && chmod +x /tmp/k
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN cd remu && cargo build
